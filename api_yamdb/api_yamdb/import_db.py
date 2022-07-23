@@ -1,6 +1,8 @@
 import csv
 from reviews.models import Review, Comment
+
 from users.models import User
+
 
 with open("static/data/review.csv", "r") as f:
     reader = csv.reader(f)

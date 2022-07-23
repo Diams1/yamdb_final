@@ -1,9 +1,8 @@
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 from rest_framework.generics import get_object_or_404
-
-from reviews.models import Review, Comment
-from titles.models import Title, Category, Genre
+from reviews.models import Comment, Review
+from titles.models import Category, Genre, Title
 from users.models import User
 
 

@@ -12,6 +12,7 @@ from .load_data import (
     import_comment
 )
 
+
 DB_TABLES = [User, Title, Category, Comment, Genre, Review]
 
 

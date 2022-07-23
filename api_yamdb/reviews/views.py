@@ -1,8 +1,8 @@
 from django.shortcuts import get_object_or_404
 from rest_framework import viewsets
+from reviews.permissions import OwnResourcePermission
 
 from reviews.models import Review
-from reviews.permissions import OwnResourcePermission
 from titles.models import Title
 from .serializers import ReviewSerializer, CommentSerializer
 
