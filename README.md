@@ -1,58 +1,58 @@
 ![Yamdb workflow](https://github.com/Diams1/yamdb_final/actions/workflows/yamdb_workflow.yml/badge.svg)
-
+![size](https://img.shields.io/github/repo-size/Diams1/yamdb_final?style=flat)
+![docker_size](https://img.shields.io/docker/image-size/384134/yamdb_final?label=docker%20image%20size&style=flat)
 # Yamdb_final
 ## Описание
 Учебный проект Яндекс.Практикума. Основное приложение  -- ```api_yamdb```, которое дает возможность людям делиться отзывами о различных фильмах,
-книгах, музыкальных коллекциях и т.д.
+книгах, музыкальных коллекциях и других произведениях.
 
-Проект упакован в Docker-контейнер.
-## Документация к API REDOC
- http://127.0.0.1/redoc/
+Проект упакован в Docker-контейнер и доступен по адресу http://<ip_address_сервера>/api/v1/
 
 ## Этот проект позволит Вам:
 - Добавлять, просматривать, редактировать и удалять отзывы о произведениях.
 - Добавлять, просматривать, редактировать и удалять комментарии к отзывам 
 произведений.
 - Ставить оценку произведениям от 1 до 10.
+
+## DevOps.
+По методологии CI/CD реализовано автоматическое тестирование кода, сборка в docker-контейнер и деплой образа на сервер.
+Триггером является команда ```push``` в репозиторий проекта, при этом запускаются:
+* Тестирование;
+    * Проверка кода на PEP8
+    * Запуск локальных тестов кода
+* Сборка и выгрузка образа на <a href='https://hub.docker.com/'> DockerHub</a>
+* Деплой образа на сервер, выполниние миграций и сбор статики
+* Отправка уведомления в телеграм об успешном завершении
+
 ### Как запустить проект: 
+
+####Для корректной работы CI/CD:
+* Необходимо добавить(Fork) репозиторий к себе в профиль;
+* Прописать переменные окружения в `Secrets-Actions` в настройках репозитория.
+Необходимые переменные можно посмотреть в шаблоне `.env.template`
 
 #### Клонируйте репозиторий:
 ```bash
-git clone https://github.com/Diams1/infra_sp2
+git clone https://github.com/Diams1/yamdb_final
 ```
-#### Создайте файл ```.env``` в каталоге infra и заполните данными по шаблону:
+#### Создайте файл ```.env``` в каталоге infra и заполните данными по шаблону `.env.template`:
 ```bash
 touch /infra/.env
 ```
 ```bash
 nano /infra/.env
 ```
-шаблон:
-```Python
-SECRET_KEY_SETTINGS='set_your_secret_key'
-DB_ENGINE=django.db.backends.postgresql
-DB_NAME=postgres
-POSTGRES_USER=postgres
-POSTGRES_PASSWORD=password   # укажите свой пароль
-DB_HOST=db
-DB_PORT=5432
+
+#### Установите на удаленном сервере <a href='https://docs.docker.com/get-docker/'> Docker</a>.
+**Скопируйте файлы `docker-compose.yaml` и `nginx/default.conf` из репозитория на сервер в
+`home/<ваш_username>/docker-compose.yaml` и `home/<ваш_username>/nginx/default.conf` соответственно.**
+```bash
+scp docker-compose.yaml username@host:home/<ваш_username>/docker-compose.yaml
+```
+```bash
+scp nginx/default.conf username@host:home/<ваш_username>/nginx/default.conf
 ```
 
-#### Установите <a href='https://docs.docker.com/get-docker/'> Docker</a> и запустите.
-#### Для сборки и запуска контейнера из образа выполните команду:
-```bash
-docker-compose up -d --build
-```
-Для сборки образа будут выполнены инструкции из файла ```docker-compose.yaml```
-
-#### Выполните миграции:
-```bash
-docker-compose exec web python manage.py migrate
-```
-#### Выгрузите статику и медиа в рабочие каталоги:
-```bash
-docker-compose exec web python manage.py collectstatic --no-input
-```
 #### Импортируйте данные из CSV в БД (опционально) :
 ```bash
 docker-compose exec web python manage.py import_db
@@ -71,12 +71,15 @@ docker-compose exec web python manage.py createsuperuser
 docker-compose stop
 ```
 
+## Документация к API REDOC
+ http://<ip_address_сервера>/redoc/
+
 ### Примеры запросов к API.
 
 ##### Аутентификация выполняется через Simple JWT.  
 Для получения кода подтверждения регистрации отправьте POST запрос с логином и e-mail на эндпойнт:
 ```
-http://localhost/api/v1/auth/signup/
+http://<ip_address_сервера>/api/v1/auth/signup/
 ```
 
 POST-запрос:
@@ -97,7 +100,7 @@ POST-запрос:
 
 ##### Для получения токена отправьте POST запрос с логином и полученным по e-mail кодом подтверждения на эндпойнт:
 ```
-http://localhost/api/v1/auth/token/
+http://<ip_address_сервера>/api/v1/auth/token/
 ```
 
 POST-запрос:
@@ -118,7 +121,7 @@ POST-запрос:
 
 ##### Для редактирования своего профайла отправьте PATCH запрос на эндпойнт:
 ```
-http://localhost/api/v1/users/me/
+http://<ip_address_сервера>/api/v1/users/me/
 ```
 PATCH-запрос:
 ```JSON
@@ -146,7 +149,7 @@ PATCH-запрос:
 
 ##### GET запрос для получения списка произведений:
 ```
-http://localhost/api/v1/titles/
+http://<ip_address_сервера>/api/v1/titles/
 ```
 
 Ответ:
@@ -189,7 +192,7 @@ http://localhost/api/v1/titles/
 http://localhost/api/v1/titles/{titles_id}/
 ```
 
-Response:
+Ответ:
 ```JSON
 {
     "id": 9,
@@ -233,15 +236,21 @@ POST-запрос:
 }
 ```
 
-## Что использовалось для создания проекта:
- - Docker compose
- - Postgres
- - Nginx
- - Gunicorn
- - Python 3.9
- - Django 2.2
- - Django REST framework 3.12
- - JWT token
+## Для разработки проекта использовалось:
+
+
+![Django](https://img.shields.io/badge/Django-092E20?style=for-the-badge&logo=django&logoColor=white)
+![DjangoREST](https://img.shields.io/badge/DJANGO-REST-ff1709?style=for-the-badge&logo=django&logoColor=white&color=ff1709&labelColor=gray)
+![Docker](https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white)
+![Postgresql](https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white)
+![GitHub Actions](https://img.shields.io/badge/GitHub_Actions-2088FF?style=for-the-badge&logo=github-actions&logoColor=white)
+![Nginx](https://img.shields.io/badge/nginx-%23009639.svg?style=for-the-badge&logo=nginx&logoColor=white)
+![Gunicorn](https://img.shields.io/badge/gunicorn-%298729.svg?style=for-the-badge&logo=gunicorn&logoColor=white)
+![JWT](https://img.shields.io/badge/JWT-black?style=for-the-badge&logo=JSON%20web%20tokens)
+
+![Python](http://ForTheBadge.com/images/badges/made-with-python.svg)
   
 ## Авторы:
- - Алексей Чиненков : <a href='https://github.com/Diams1'> GitHub</a>, <a href='https://t.me/Diams'> Telegram</a>
+_Alexey Chinenkov_ :
+[![GitHub](https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white)](https://github.com/Diams1) 
+[![Telegram](https://img.shields.io/badge/Telegram-2CA5E0?style=for-the-badge&logo=telegram&logoColor=white)](https://t.me/Diams)
