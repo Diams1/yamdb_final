@@ -1,17 +1,10 @@
 from django.core.management import BaseCommand
-
 from reviews.models import Comment, Review
 from titles.models import Category, Genre, Title
 from users.models import User
-from .load_data import (
-    import_users,
-    import_category,
-    import_genre,
-    import_title,
-    import_review,
-    import_comment
-)
 
+from .load_data import (import_category, import_comment, import_genre,
+                        import_review, import_title, import_users)
 
 DB_TABLES = [User, Title, Category, Comment, Genre, Review]
 

@@ -1,7 +1,7 @@
 from csv import DictReader
 
-from reviews.models import Review, Comment
-from titles.models import Title, Category, Genre
+from reviews.models import Comment, Review
+from titles.models import Category, Genre, Title
 from users.models import User
 
 
