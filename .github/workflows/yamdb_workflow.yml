@@ -50,6 +50,7 @@ jobs:
       - name: Push to Docker Hub
         uses: docker/build-push-action@v2
         with:
+          file: api_yamdb/Dockerfile
           push: true
           tags: ${{ secrets.DOCKER_LOGIN }}/yamdb_final:latest
 
