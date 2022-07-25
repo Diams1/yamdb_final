@@ -10,10 +10,7 @@ services:
 
   web:
     image: 384134/yamdb_final:latest
-    command: >
-      sh -c "python3 /app/manage.py migrate &&
-             python3 /app/manage.py collectstatic --noinput &&
-             gunicorn --bind 0:8000 api_yamdb.wsgi:application"
+    command: gunicorn --bind 0:8000 api_yamdb.wsgi:application
     restart: always
     volumes:
       - static_value:/app/static/
