@@ -53,6 +53,7 @@ jobs:
           tags: ${{ secrets.DOCKER_LOGIN }}/yamdb_final:latest
 
   deploy:
+    if: github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
     needs: build_and_push_to_docker_hub
 
